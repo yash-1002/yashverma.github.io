@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yash Verma — AI Product & Data</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════════════════════ */
+:root {
+  --bg: #0A0A0A;
+  --bg1: #0F0F0F;
+  --bg2: #141414;
+  --bg3: #1C1C1C;
+  --line: #222222;
+  --line2: #2E2E2E;
+  --fg: #F0EDE8;
+  --fg2: #B8B4AE;
+  --fg3: #6A6560;
+  --accent: #C8F04D;       /* electric lime — Yash's signal colour */
+  --accent2: #A8D835;
+  --accent-dim: #1A2408;
+  --amber: #E8963A;        /* warm secondary */
+  --blue: #4DAAFF;
+  --red: #FF6B6B;
+  --green: #4DCC8F;
+  --card: #111111;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sans: 'Geist', system-ui, sans-serif;
+  --mono: 'Geist Mono', monospace;
+  --r: 6px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESET
+═══════════════════════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-weight: 400;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* cursor dot */
+.cursor {
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 10000;
+  transition: transform 0.15s ease, opacity 0.2s;
+  mix-blend-mode: difference;
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(200,240,77,0.4);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.2s;
+}
+
+/* noise grain */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9998; opacity: 0.5;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.1rem 3rem;
+  background: rgba(10,10,10,0.8);
+  backdrop-filter: blur(20px) saturate(1.2);
+  border-bottom: 1px solid var(--line);
+}
+.nav-logo {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  color: var(--fg);
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+.nav-logo strong { color: var(--accent); font-style: normal; font-family: var(--mono); font-size: 0.85rem; }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  font-size: 0.78rem; font-weight: 500; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--fg3);
+  text-decoration: none; transition: color 0.2s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--accent); }
+.nav-right { display: flex; align-items: center; gap: 1rem; }
+.nav-contact {
+  display: flex; gap: 1rem;
+  font-family: var(--mono); font-size: 0.72rem; color: var(--fg3);
+}
+.nav-contact a { color: var(--fg3); text-decoration: none; transition: color 0.2s; }
+.nav-contact a:hover { color: var(--accent); }
+.nav-btn {
+  background: var(--accent); color: #000;
+  padding: 0.45rem 1.2rem; border-radius: 3px;
+  font-size: 0.76rem; font-weight: 600; letter-spacing: 0.04em;
+  text-decoration: none; transition: all 0.2s;
+}
+.nav-btn:hover { background: var(--accent2); transform: translateY(-1px); }
+.nav-ham { display: none; background: none; border: 1px solid var(--line2); color: var(--fg); padding: 0.38rem 0.7rem; border-radius: 3px; cursor: pointer; font-size: 1rem; }
+@media(max-width:900px){
+  .nav-ham { display: block; }
+  .nav-links, .nav-contact { display: none; }
+  nav { padding: 0.9rem 1.4rem; }
+}
+.mob { display:none; position:fixed; inset:0; background:rgba(5,5,5,0.98); z-index:150; flex-direction:column; align-items:center; justify-content:center; gap:2.5rem; }
+.mob.open { display:flex; }
+.mob a { font-family:var(--serif); font-style:italic; font-size:2rem; color:var(--fg2); text-decoration:none; }
+.mob-x { position:absolute; top:1.5rem; right:1.5rem; background:none; border:none; color:var(--fg3); font-size:1.5rem; cursor:pointer; }
+
+/* ═══════════════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════════════ */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 3rem 4rem;
+  position: relative; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 70% 30%, rgba(200,240,77,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 20% 70%, rgba(232,150,58,0.04) 0%, transparent 60%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 72px 72px;
+  opacity: 0.3;
+  mask-image: radial-gradient(ellipse 100% 100% at 50% 0%, black 40%, transparent 100%);
+}
+.hero-inner { position: relative; max-width: 1200px; margin: 0 auto; width: 100%; }
+.hero-top {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem;
+}
+.hero-tag {
+  font-family: var(--mono); font-size: 0.72rem;
+  color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;
+  border: 1px solid rgba(200,240,77,0.3);
+  padding: 0.3rem 0.8rem; border-radius: 20px;
+  background: rgba(200,240,77,0.06);
+  animation: fadeup 0.6s ease both;
+}
+.hero-role-line {
+  font-family: var(--mono); font-size: 0.72rem; color: var(--fg3);
+  text-align: right;
+  animation: fadeup 0.6s 0.1s ease both;
+}
+.hero-name {
+  font-family: var(--serif);
+  font-size: clamp(4.5rem, 11vw, 10rem);
+  font-weight: 400;
+  line-height: 0.88;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin-bottom: 2rem;
+  animation: fadeup 0.7s 0.05s ease both;
+}
+.hero-name .italic { font-style: italic; color: var(--accent); }
+.hero-bottom {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 2rem; flex-wrap: wrap;
+}
+.hero-desc {
+  max-width: 500px; font-size: 1rem; color: var(--fg2);
+  line-height: 1.75; font-weight: 300;
+  animation: fadeup 0.7s 0.2s ease both;
+}
+.hero-desc strong { color: var(--fg); font-weight: 500; }
+.hero-ctas {
+  display: flex; gap: 0.8rem; flex-wrap: wrap;
+  animation: fadeup 0.7s 0.3s ease both;
+}
+.btn-a {
+  background: var(--accent); color: #000;
+  padding: 0.8rem 1.8rem; border-radius: 4px;
+  font-weight: 600; font-size: 0.86rem; letter-spacing: 0.02em;
+  text-decoration: none; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+}
+.btn-a:hover { background: var(--accent2); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(200,240,77,0.2); }
+.btn-b {
+  background: transparent; color: var(--fg2); border: 1px solid var(--line2);
+  padding: 0.8rem 1.8rem; border-radius: 4px;
+  font-weight: 500; font-size: 0.86rem;
+  text-decoration: none; transition: all 0.2s;
+}
+.btn-b:hover { border-color: var(--accent); color: var(--accent); }
+
+/* scroll indicator */
+.hero-scroll {
+  position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  color: var(--fg3); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+  animation: fadeup 0.7s 0.5s ease both;
+}
+.hero-scroll-line {
+  width: 1px; height: 48px;
+  background: linear-gradient(var(--accent), transparent);
+  animation: scrollpulse 2.2s infinite;
+}
+@keyframes scrollpulse { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); } 100% { transform: scaleY(0); transform-origin: bottom; } }
+@keyframes fadeup { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ═══════════════════════════════════════════════════════════
+   TICKER
+═══════════════════════════════════════════════════════════ */
+.ticker-wrap {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--bg1);
+  overflow: hidden;
+  padding: 0.85rem 0;
+  white-space: nowrap;
+}
+.ticker-track {
+  display: inline-flex; gap: 0;
+  animation: tickerMove 28s linear infinite;
+}
+.ticker-track:hover { animation-play-state: paused; }
+.tick-item {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0 2.5rem;
+  font-family: var(--mono); font-size: 0.78rem; color: var(--fg2);
+  border-right: 1px solid var(--line2);
+}
+.tick-item .val { color: var(--accent); font-weight: 500; font-size: 0.9rem; }
+.tick-item .diamond { color: var(--accent); opacity: 0.5; }
+@keyframes tickerMove { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ═══════════════════════════════════════════════════════════
+   SECTION SHARED
+═══════════════════════════════════════════════════════════ */
+section { padding: 7rem 3rem; }
+@media(max-width:700px) { section { padding: 5rem 1.4rem; } }
+.inner { max-width: 1200px; margin: 0 auto; }
+.ey {
+  font-family: var(--mono); font-size: 0.7rem; color: var(--accent);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.6rem;
+}
+.ey::after { content: ''; height: 1px; background: var(--line2); width: 44px; }
+.htitle {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 400; font-style: italic;
+  color: var(--fg); letter-spacing: -0.01em; line-height: 1.05;
+  margin-bottom: 1rem;
+}
+.hsub { color: var(--fg3); font-size: 0.95rem; max-width: 480px; line-height: 1.7; }
+.shdr { margin-bottom: 4rem; }
+
+/* ═══════════════════════════════════════════════════════════
+   ABOUT
+═══════════════════════════════════════════════════════════ */
+#about { background: var(--bg1); }
+.about-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 6rem; align-items: start; }
+@media(max-width:900px) { .about-grid { grid-template-columns: 1fr; gap: 3rem; } }
+.about-text p { color: var(--fg2); font-size: 0.97rem; line-height: 1.85; margin-bottom: 1.1rem; font-weight: 300; }
+.about-text p:last-of-type { margin-bottom: 0; }
+.about-text strong { color: var(--accent); font-weight: 500; }
+.about-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
+.achip {
+  background: var(--bg3); border: 1px solid var(--line2);
+  color: var(--fg2); padding: 0.28rem 0.75rem; border-radius: 2px;
+  font-size: 0.74rem; font-family: var(--mono);
+}
+.about-traits { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media(max-width:600px) { .about-traits { grid-template-columns: 1fr; } }
+.trait {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 1.4rem;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.trait:hover { border-color: rgba(200,240,77,0.35); transform: translateY(-2px); }
+.trait-icon { font-size: 1.3rem; margin-bottom: 0.6rem; display: block; }
+.trait-title { font-size: 0.84rem; font-weight: 600; color: var(--fg); margin-bottom: 0.3rem; }
+.trait-body { font-size: 0.78rem; color: var(--fg3); line-height: 1.55; }
+
+/* ═══════════════════════════════════════════════════════════
+   IMPACT / NUMBERS
+═══════════════════════════════════════════════════════════ */
+#impact { background: var(--bg); }
+.impact-intro { max-width: 560px; margin-bottom: 4rem; }
+.impact-intro p { color: var(--fg2); font-size: 1rem; line-height: 1.75; font-weight: 300; }
+.impact-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.impact-card {
+  background: var(--card);
+  padding: 2.5rem 2rem;
+  transition: background 0.2s;
+  position: relative;
+}
+.impact-card:hover { background: var(--bg2); }
+.impact-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--accent); transform: scaleX(0); transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.impact-card:hover::before { transform: scaleX(1); }
+.impact-num {
+  font-family: var(--serif); font-style: italic;
+  font-size: 3.5rem; color: var(--accent);
+  line-height: 1; display: block; margin-bottom: 0.6rem;
+  letter-spacing: -0.02em;
+}
+.impact-label { font-size: 0.84rem; font-weight: 500; color: var(--fg); margin-bottom: 0.4rem; }
+.impact-desc { font-size: 0.78rem; color: var(--fg3); line-height: 1.55; }
+
+/* ═══════════════════════════════════════════════════════════
+   JOURNEY (TIMELINE)
+═══════════════════════════════════════════════════════════ */
+#journey { background: var(--bg1); }
+.journey-note { font-size: 0.78rem; color: var(--fg3); font-family: var(--mono); margin-bottom: 3rem; }
+.journey-note span { color: var(--accent); }
+.timeline { display: flex; flex-direction: column; gap: 0; }
+.tl-item {
+  border: 1px solid var(--line);
+  border-bottom: none;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.tl-item:last-child { border-bottom: 1px solid var(--line); border-radius: 0 0 var(--r) var(--r); }
+.tl-item:first-child { border-radius: var(--r) var(--r) 0 0; }
+.tl-item.active { border-color: rgba(200,240,77,0.4); }
+.tl-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.5rem 2rem; cursor: pointer;
+  background: var(--card); transition: background 0.2s;
+  gap: 1rem;
+}
+.tl-header:hover, .tl-item.active .tl-header { background: var(--bg3); }
+.tl-left { display: flex; align-items: center; gap: 1.5rem; }
+.tl-period { font-family: var(--mono); font-size: 0.72rem; color: var(--fg3); min-width: 80px; }
+.tl-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line2); transition: background 0.2s; flex-shrink: 0; }
+.tl-item.active .tl-dot { background: var(--accent); box-shadow: 0 0 8px rgba(200,240,77,0.5); }
+.tl-co { font-family: var(--serif); font-style: italic; font-size: 1.3rem; color: var(--fg); }
+.tl-role { font-size: 0.82rem; color: var(--fg3); margin-top: 0.15rem; }
+.tl-right { display: flex; align-items: center; gap: 1rem; }
+.tl-badge {
+  background: var(--accent-dim); border: 1px solid rgba(200,240,77,0.3);
+  color: var(--accent); padding: 0.18rem 0.65rem; border-radius: 20px;
+  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  white-space: nowrap;
+}
+.tl-arrow { color: var(--fg3); font-size: 1rem; transition: transform 0.3s, color 0.2s; }
+.tl-item.active .tl-arrow { transform: rotate(180deg); color: var(--accent); }
+.tl-body {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.45s cubic-bezier(0.16,1,0.3,1);
+}
+.tl-item.active .tl-body { max-height: 600px; }
+.tl-content { padding: 0 2rem 2rem 6.5rem; }
+.tl-tagline { font-size: 0.82rem; color: var(--accent); font-family: var(--mono); margin-bottom: 1rem; }
+.tl-bullets { list-style: none; display: flex; flex-direction: column; }
+.tl-bullets li {
+  font-size: 0.88rem; color: var(--fg2); line-height: 1.65;
+  padding: 0.45rem 0 0.45rem 1.3rem; position: relative;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.tl-bullets li:last-child { border-bottom: none; }
+.tl-bullets li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: 0.75rem; top: 0.5rem; }
+.tl-bullets li strong { color: var(--fg); font-weight: 500; }
+.tl-metrics { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.2rem; }
+.tm { background: rgba(200,240,77,0.07); border: 1px solid rgba(200,240,77,0.2); color: var(--accent); padding: 0.22rem 0.65rem; border-radius: 2px; font-size: 0.71rem; font-family: var(--mono); }
+
+/* ═══════════════════════════════════════════════════════════
+   FEATURED PROJECT
+═══════════════════════════════════════════════════════════ */
+#featured { background: var(--bg); }
+.feat-card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--r); overflow: hidden;
+  display: grid; grid-template-columns: 1fr 1fr;
+  transition: box-shadow 0.3s;
+}
+.feat-card:hover { box-shadow: 0 24px 80px rgba(200,240,77,0.07); }
+@media(max-width:900px) { .feat-card { grid-template-columns: 1fr; } }
+.feat-l { padding: 3rem; border-right: 1px solid var(--line); }
+@media(max-width:900px) { .feat-l { border-right: none; border-bottom: 1px solid var(--line); } }
+.feat-r { padding: 3rem; display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; }
+.feat-pill {
+  display: inline-block; background: rgba(200,240,77,0.1); border: 1px solid rgba(200,240,77,0.3);
+  color: var(--accent); padding: 0.22rem 0.8rem; border-radius: 20px;
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.feat-title {
+  font-family: var(--serif); font-style: italic;
+  font-size: 2.2rem; color: var(--fg); letter-spacing: -0.01em;
+  line-height: 1.05; margin-bottom: 0.9rem;
+}
+.feat-desc { color: var(--fg3); font-size: 0.9rem; line-height: 1.72; margin-bottom: 1.4rem; font-weight: 300; }
+.subh { font-family: var(--mono); font-size: 0.67rem; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; }
+.feat-detail { color: var(--fg2); font-size: 0.86rem; line-height: 1.72; margin-bottom: 1.3rem; font-weight: 300; }
+.tools-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.3rem; }
+.tool { background: var(--bg3); border: 1px solid var(--line2); color: var(--fg2); padding: 0.2rem 0.6rem; border-radius: 2px; font-size: 0.71rem; font-family: var(--mono); }
+.feat-nums { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.8rem; }
+.fn { background: var(--bg3); border: 1px solid var(--line2); border-radius: 5px; padding: 1rem; text-align: center; }
+.fn-num { font-family: var(--serif); font-style: italic; font-size: 2rem; color: var(--accent); display: block; line-height: 1; }
+.fn-label { font-size: 0.65rem; color: var(--fg3); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 0.28rem; }
+.feat-btns { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+.fb1 { background: var(--accent); color: #000; padding: 0.65rem 1.4rem; border-radius: 3px; font-weight: 700; font-size: 0.8rem; text-decoration: none; transition: all 0.2s; }
+.fb1:hover { background: var(--accent2); }
+.fb2 { background: transparent; color: var(--fg2); border: 1px solid var(--line2); padding: 0.65rem 1.4rem; border-radius: 3px; font-weight: 500; font-size: 0.8rem; text-decoration: none; transition: all 0.2s; }
+.fb2:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ═══════════════════════════════════════════════════════════
+   PROJECTS
+═══════════════════════════════════════════════════════════ */
+#projects { background: var(--bg1); }
+.pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.2rem; }
+.pc {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--r); overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: all 0.25s; position: relative;
+}
+.pc:hover { border-color: rgba(200,240,77,0.3); transform: translateY(-3px); box-shadow: 0 16px 48px rgba(0,0,0,0.4); }
+.pc-accent { height: 2px; }
+.pc-body { padding: 1.6rem; flex: 1; display: flex; flex-direction: column; }
+.pc-type { font-family: var(--mono); font-size: 0.67rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.65rem; }
+.pc-title { font-family: var(--serif); font-style: italic; font-size: 1.25rem; color: var(--fg); letter-spacing: -0.01em; line-height: 1.2; margin-bottom: 0.65rem; }
+.pc-prob { font-size: 0.81rem; color: var(--fg3); line-height: 1.62; padding-bottom: 0.9rem; border-bottom: 1px solid var(--line); margin-bottom: 0.75rem; flex: 1; font-weight: 300; }
+.ph { font-family: var(--mono); font-size: 0.63rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.38rem; margin-top: 0.75rem; }
+.pc-approach { font-size: 0.81rem; color: var(--fg2); line-height: 1.62; margin-bottom: 0.75rem; font-weight: 300; }
+.pc-tools { display: flex; flex-wrap: wrap; gap: 0.38rem; margin-bottom: 0.85rem; }
+.pt { background: var(--bg3); border: 1px solid var(--line2); color: var(--fg3); padding: 0.17rem 0.5rem; border-radius: 2px; font-size: 0.69rem; font-family: var(--mono); }
+.pc-impact { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.85rem; }
+.pi { background: rgba(77,204,143,0.08); border: 1px solid rgba(77,204,143,0.25); color: var(--green); padding: 0.2rem 0.58rem; border-radius: 2px; font-size: 0.71rem; font-weight: 500; font-family: var(--mono); }
+.pc-learn { font-size: 0.78rem; color: var(--fg3); line-height: 1.58; margin-bottom: 1.1rem; font-weight: 300; }
+.pc-foot { padding: 0.95rem 1.6rem; border-top: 1px solid var(--line); background: rgba(255,255,255,0.015); display: flex; gap: 0.55rem; flex-wrap: wrap; }
+.pb1 { background: var(--accent); color: #000; padding: 0.42rem 1rem; border-radius: 3px; font-weight: 700; font-size: 0.75rem; text-decoration: none; transition: all 0.2s; white-space: nowrap; }
+.pb1:hover { background: var(--accent2); }
+.pb2 { background: transparent; color: var(--fg3); border: 1px solid var(--line2); padding: 0.42rem 1rem; border-radius: 3px; font-weight: 500; font-size: 0.75rem; text-decoration: none; transition: all 0.2s; white-space: nowrap; }
+.pb2:hover { color: var(--fg); border-color: var(--fg3); }
+.research-pill { position: absolute; top: 1rem; right: 1rem; background: rgba(77,170,255,0.1); border: 1px solid rgba(77,170,255,0.3); color: var(--blue); padding: 0.16rem 0.52rem; border-radius: 2px; font-size: 0.63rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-family: var(--mono); }
+
+/* ═══════════════════════════════════════════════════════════
+   DUAL IDENTITY (SKILLS)
+═══════════════════════════════════════════════════════════ */
+#skills { background: var(--bg); }
+.dual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+@media(max-width:900px) { .dual-grid { grid-template-columns: 1fr; } }
+.dual-card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 2.5rem;
+}
+.dual-card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+.dual-icon { font-size: 1.8rem; }
+.dual-card-title { font-family: var(--serif); font-style: italic; font-size: 1.6rem; color: var(--fg); }
+.dual-card-sub { font-size: 0.78rem; color: var(--fg3); margin-top: 0.2rem; }
+.skill-row { margin-bottom: 1.5rem; }
+.skill-row-title { font-size: 0.78rem; font-weight: 600; color: var(--fg); margin-bottom: 0.5rem; }
+.skill-row-sub { font-size: 0.76rem; color: var(--fg3); line-height: 1.55; margin-bottom: 0.6rem; }
+.skill-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.stag { background: var(--bg3); border: 1px solid var(--line2); color: var(--fg2); padding: 0.25rem 0.68rem; border-radius: 20px; font-size: 0.73rem; font-family: var(--mono); transition: all 0.2s; cursor: default; }
+.stag:hover { border-color: var(--accent); color: var(--accent); }
+.skill-divider { border: none; border-top: 1px solid var(--line); margin: 1.5rem 0; }
+
+/* ═══════════════════════════════════════════════════════════
+   CTA
+═══════════════════════════════════════════════════════════ */
+#cta {
+  background: var(--bg1);
+  border-top: 1px solid var(--line);
+  text-align: center; padding: 8rem 3rem;
+}
+.cta-ey { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 1.2rem; }
+.cta-h {
+  font-family: var(--serif); font-size: clamp(3rem, 6vw, 5.5rem);
+  font-weight: 400; font-style: italic; color: var(--fg);
+  letter-spacing: -0.02em; line-height: 1.0; margin-bottom: 1rem;
+}
+.cta-h em { color: var(--accent); }
+.cta-sub { color: var(--fg3); font-size: 1rem; max-width: 440px; margin: 0 auto 3rem; line-height: 1.7; font-weight: 300; }
+.cta-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
+.cta-links { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; }
+.cta-link { color: var(--fg3); text-decoration: none; font-size: 0.84rem; transition: color 0.2s; display: flex; align-items: center; gap: 0.4rem; }
+.cta-link:hover { color: var(--accent); }
+
+/* ═══════════════════════════════════════════════════════════
+   CONTACT FORM
+═══════════════════════════════════════════════════════════ */
+#contact { background: var(--bg); padding: 7rem 3rem; }
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; }
+@media(max-width:900px) { .contact-grid { grid-template-columns: 1fr; gap: 3rem; } }
+.contact-left p { color: var(--fg2); font-size: 0.96rem; line-height: 1.8; margin-bottom: 1rem; font-weight: 300; }
+.contact-links { margin-top: 2rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.cl { display: flex; align-items: center; gap: 1rem; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 0.9rem 1.2rem; text-decoration: none; color: var(--fg2); transition: all 0.2s; }
+.cl:hover { border-color: rgba(200,240,77,0.4); color: var(--accent); }
+.cl-icon { font-size: 1rem; flex-shrink: 0; }
+.cl-lbl { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg3); display: block; font-family: var(--mono); }
+.cl-val { font-size: 0.85rem; font-weight: 500; }
+.cf-box { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 2.2rem; }
+.cf-title { font-family: var(--serif); font-style: italic; font-size: 1.5rem; color: var(--fg); margin-bottom: 1.5rem; }
+.fg-g { margin-bottom: 1rem; }
+.fg-g label { display: block; font-family: var(--mono); font-size: 0.68rem; color: var(--fg3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.38rem; }
+.fg-g input, .fg-g textarea { width: 100%; background: var(--bg3); border: 1px solid var(--line2); color: var(--fg); border-radius: 4px; padding: 0.7rem 0.9rem; font-family: var(--sans); font-size: 0.88rem; transition: border-color 0.2s; resize: vertical; }
+.fg-g input:focus, .fg-g textarea:focus { outline: none; border-color: var(--accent); }
+.fg-g textarea { min-height: 95px; }
+.cf-btn { width: 100%; background: var(--accent); color: #000; padding: 0.85rem; border-radius: 3px; border: none; font-weight: 700; font-size: 0.88rem; cursor: pointer; font-family: var(--sans); transition: all 0.2s; }
+.cf-btn:hover { background: var(--accent2); }
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════════ */
+footer { background: var(--bg1); border-top: 1px solid var(--line); padding: 1.8rem 3rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.fl { font-family: var(--mono); font-size: 0.74rem; color: var(--fg3); }
+.fl strong { color: var(--accent); }
+.flinks { display: flex; gap: 1.5rem; }
+.flinks a { font-family: var(--mono); font-size: 0.74rem; color: var(--fg3); text-decoration: none; transition: color 0.2s; }
+.flinks a:hover { color: var(--accent); }
+
+/* ═══════════════════════════════════════════════════════════
+   REVEAL
+═══════════════════════════════════════════════════════════ */
+.rev { opacity: 0; transform: translateY(24px); transition: all 0.65s cubic-bezier(0.16,1,0.3,1); }
+.rev.on { opacity: 1; transform: translateY(0); }
+.d1 { transition-delay: 0.08s; } .d2 { transition-delay: 0.16s; } .d3 { transition-delay: 0.24s; } .d4 { transition-delay: 0.32s; }
+</style>
+</head>
+<body>
+
+<!-- cursor -->
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curR"></div>
+
+<!-- mobile -->
+<div class="mob" id="mob">
+  <button class="mob-x" onclick="closeMob()">✕</button>
+  <a href="#about" onclick="closeMob()">About</a>
+  <a href="#impact" onclick="closeMob()">Impact</a>
+  <a href="#journey" onclick="closeMob()">Journey</a>
+  <a href="#featured" onclick="closeMob()">Featured</a>
+  <a href="#projects" onclick="closeMob()">Projects</a>
+  <a href="#skills" onclick="closeMob()">Skills</a>
+  <a href="#contact" onclick="closeMob()">Contact</a>
+</div>
+
+<!-- ── NAV ──────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-logo">Yash <strong>YV</strong></div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#impact">Impact</a></li>
+    <li><a href="#journey">Journey</a></li>
+    <li><a href="#featured">Featured</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-contact">
+      <a href="mailto:yashverma1002@gmail.com">yashverma1002@gmail.com</a>
+      <span>·</span>
+      <a href="tel:+916397610656">+91 63976 10656</a>
+      <span>·</span>
+      <a href="https://linkedin.com/in/yashverma" target="_blank">LinkedIn ↗</a>
+    </div>
+    <a href="mailto:yashverma1002@gmail.com" class="nav-btn">Hire Me</a>
+  </div>
+  <button class="nav-ham" onclick="toggleMob()">☰</button>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div class="hero-tag">AI Product · Data · GenAI · Delhi, India</div>
+      <div class="hero-role-line">Expert – Data Science &amp; AI @ Chegg Inc. &nbsp;·&nbsp; Chegg · Wokelo AI · DTU '23</div>
+    </div>
+    <h1 class="hero-name">Yash<br><span class="italic">Verma.</span></h1>
+    <div class="hero-bottom">
+      <p class="hero-desc">
+        AI Product thinker &amp; Data Analyst. <strong>3+ years building GenAI-powered products from 0→1.</strong> I combine behavioral analytics, LLM capabilities, and user research to ship features that move engagement, retention, and outcomes.
+      </p>
+      <div class="hero-ctas">
+        <a href="#projects" class="btn-a">See my work</a>
+        <a href="#journey" class="btn-b">My journey →</a>
+        <a href="#" class="btn-b">Resume</a>
+        <a href="https://linkedin.com/in/yashverma" target="_blank" class="btn-b">LinkedIn ↗</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll"><div class="hero-scroll-line"></div>scroll</div>
+</section>
+
+<!-- ── TICKER ──────────────────────────────────────────────── -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <!-- Set 1 -->
+    <div class="tick-item"><span class="val">↓10%</span> Dropout Rate <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">↑22%</span> Completion Rate <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">↑18%</span> Quiz Scores <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">↑40%</span> Graduation Rate <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">30K+</span> Interactions Analysed <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">↑20%</span> User Satisfaction <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">3+</span> Years AI Products <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">ACM</span> Published Research <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">↑40%</span> Enterprise Adoption <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">DTU</span> GPA 8.31/10 <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">6</span> Portfolio Projects <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">3-Layer</span> AI Engine Built <span class="diamond">◆</span></div>
+    <!-- Set 2 (clone for seamless loop) -->
+    <div class="tick-item"><span class="val">↓10%</span> Dropout Rate <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">↑22%</span> Completion Rate <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">↑18%</span> Quiz Scores <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">↑40%</span> Graduation Rate <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">30K+</span> Interactions Analysed <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">↑20%</span> User Satisfaction <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">3+</span> Years AI Products <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">ACM</span> Published Research <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">↑40%</span> Enterprise Adoption <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">DTU</span> GPA 8.31/10 <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">6</span> Portfolio Projects <span class="diamond">◆</span></div>
+    <div class="tick-item"><span class="val">3-Layer</span> AI Engine Built <span class="diamond">◆</span></div>
+  </div>
+</div>
+
+<!-- ── ABOUT ──────────────────────────────────────────────── -->
+<section id="about">
+  <div class="inner">
+    <div class="about-grid">
+      <div class="about-text rev">
+        <div class="ey">The person behind the metrics</div>
+        <h2 class="htitle">I think in systems.</h2>
+        <p>I started in Mechanical Engineering at Delhi Technological University — not because I wanted to become a mechanical engineer, but because complex systems with real-world constraints were the most interesting problems I could find. That instinct didn't change. It just found a better domain.</p>
+        <p>AI products, to me, are an engineering problem with human variables. You zoom out to understand the user's mental model, identify the highest-leverage friction point, form a hypothesis, then ship fast and measure honestly. I've done that at <strong>Chegg</strong> — building a 3-layer AI recommendation engine from scratch — and at <strong>Wokelo AI</strong>, shaping a GenAI product roadmap from beta to enterprise adoption.</p>
+        <p>I'm drawn to problems where the solution has to hold for millions of people — where every point of drop-off, every moment of confusion, every missed recommendation is a person who didn't come back.</p>
+        <div class="about-chips">
+          <span class="achip">0→1 Products</span>
+          <span class="achip">GenAI / LLMs</span>
+          <span class="achip">Behavioral Analytics</span>
+          <span class="achip">A/B Testing</span>
+          <span class="achip">VoC Research</span>
+          <span class="achip">Product Strategy</span>
+        </div>
+      </div>
+      <div class="about-traits">
+        <div class="trait rev d1">
+          <span class="trait-icon">🧠</span>
+          <div class="trait-title">First principles first</div>
+          <div class="trait-body">I zoom out before I dive in. User mental model before data, frameworks before tools — then I execute fast and measure honestly.</div>
+        </div>
+        <div class="trait rev d2">
+          <span class="trait-icon">⚙️</span>
+          <div class="trait-title">Builder at heart</div>
+          <div class="trait-body">I get restless waiting for things to be built. From RAG pipelines to Power BI dashboards — if I can ship it myself, I will.</div>
+        </div>
+        <div class="trait rev d3">
+          <span class="trait-icon">📊</span>
+          <div class="trait-title">Data-first decisions</div>
+          <div class="trait-body">Every product decision I've made was anchored in behavioral signals, cohort data, or VoC analysis. Intuition is a starting point — not a conclusion.</div>
+        </div>
+        <div class="trait rev d4">
+          <span class="trait-icon">🌍</span>
+          <div class="trait-title">Currently exploring</div>
+          <div class="trait-body">AI-native product infrastructure · agentic workflows · what makes recommendation systems genuinely trustworthy.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── IMPACT ──────────────────────────────────────────────── -->
+<section id="impact">
+  <div class="inner">
+    <div class="shdr rev">
+      <div class="ey">Impact at scale</div>
+      <h2 class="htitle">Numbers earned, not inherited.</h2>
+    </div>
+    <div class="impact-intro rev">
+      <p>Every metric came from deliberate strategy, rigorous experimentation, and relentless execution — across Chegg, Wokelo AI, and beyond. Built on behavioral analytics, NLP, A/B testing, and AI product thinking.</p>
+    </div>
+    <div class="impact-grid">
+      <div class="impact-card rev d1">
+        <span class="impact-num">↓10%</span>
+        <div class="impact-label">Dropout Rate Reduced</div>
+        <div class="impact-desc">Achieved through VoC analysis on 30K+ user interactions and SCR personalisation engine that matched students to the right course at the right time.</div>
+      </div>
+      <div class="impact-card rev d2">
+        <span class="impact-num">↑22%</span>
+        <div class="impact-label">Course Completion Rate</div>
+        <div class="impact-desc">Power BI dashboards surfaced content gaps; data-guided revisions lifted completion across the full student base at Chegg Skills.</div>
+      </div>
+      <div class="impact-card rev d3">
+        <span class="impact-num">↑40%</span>
+        <div class="impact-label">Graduation Rate Uplift</div>
+        <div class="impact-desc">Monthly executive reports with AI-driven product recommendations consistently improved outcomes across Chegg's EdTech curriculum.</div>
+      </div>
+      <div class="impact-card rev d1">
+        <span class="impact-num">↑18%</span>
+        <div class="impact-label">Quiz Score Improvement</div>
+        <div class="impact-desc">A/B tests on curriculum complexity, content sequencing, and grading rubrics — direct feedback into the product prioritisation cycle.</div>
+      </div>
+      <div class="impact-card rev d2">
+        <span class="impact-num">30K+</span>
+        <div class="impact-label">User Interactions Analysed</div>
+        <div class="impact-desc">NLP pipeline (TF-IDF, LDA, VADER) applied to raw feedback at scale — transformed noise into a ranked, evidence-backed product backlog.</div>
+      </div>
+      <div class="impact-card rev d3">
+        <span class="impact-num">↑40%</span>
+        <div class="impact-label">Enterprise Adoption</div>
+        <div class="impact-desc">At Wokelo AI — onboarding strategy, cohort analysis, and 50+ AI-generated sector deliverables that accelerated PMF across consulting verticals.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── JOURNEY ──────────────────────────────────────────────── -->
+<section id="journey">
+  <div class="inner">
+    <div class="shdr rev">
+      <div class="ey">Career journey</div>
+      <h2 class="htitle">The story so far.</h2>
+    </div>
+    <p class="journey-note rev">👇 <span>Tap each role to explore</span></p>
+    <div class="timeline">
+
+      <!-- DTU -->
+      <div class="tl-item" onclick="toggleTL(this)">
+        <div class="tl-header">
+          <div class="tl-left">
+            <div class="tl-period">2019 – 23</div>
+            <div class="tl-dot"></div>
+            <div>
+              <div class="tl-co">Delhi Technological University</div>
+              <div class="tl-role">B.Tech, Mechanical Engineering · Minor: Data Analytics</div>
+            </div>
+          </div>
+          <div class="tl-right">
+            <span class="tl-badge">GPA 8.31</span>
+            <span class="tl-arrow">↓</span>
+          </div>
+        </div>
+        <div class="tl-body">
+          <div class="tl-content">
+            <div class="tl-tagline">Where the data instinct was born.</div>
+            <ul class="tl-bullets">
+              <li>Studied Mechanical Engineering with a <strong>Minor in Data Analytics</strong> — deliberately bridging physical systems thinking with data-driven problem solving.</li>
+              <li>Published research at <strong>ICIMMI 2022</strong> (Scopus-indexed, ACM Proceedings) on EDA of student alcohol consumption and academic performance — first application of applied statistical analysis to a real behavioural dataset.</li>
+              <li>GPA: <strong>8.31 / 10</strong></li>
+            </ul>
+            <div class="tl-metrics"><span class="tm">ACM Published</span><span class="tm">Scopus-indexed</span><span class="tm">Data Analytics Minor</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WOKELO -->
+      <div class="tl-item" onclick="toggleTL(this)">
+        <div class="tl-header">
+          <div class="tl-left">
+            <div class="tl-period">Oct '22 – Feb '23</div>
+            <div class="tl-dot"></div>
+            <div>
+              <div class="tl-co">Wokelo AI</div>
+              <div class="tl-role">Business Analyst — Founder's Office</div>
+            </div>
+          </div>
+          <div class="tl-right">
+            <span class="tl-arrow">↓</span>
+          </div>
+        </div>
+        <div class="tl-body">
+          <div class="tl-content">
+            <div class="tl-tagline">GenAI startup · enterprise research platform · 0→PMF</div>
+            <ul class="tl-bullets">
+              <li>Owned <strong>end-to-end onboarding and feedback strategy</strong> for 30+ enterprise beta users; structured cohort analysis improved feedback quality by 35% and directly shaped AI product roadmap priorities.</li>
+              <li>Partnered with founders to produce <strong>50+ AI-generated sector research deliverables</strong>, accelerating enterprise adoption by 40% and validating PMF across consulting and startup verticals.</li>
+              <li>Led <strong>competitive landscape and SWOT analysis</strong> using Crunchbase, Tracxn, and Owler; insights drove GTM repositioning and differentiated the platform's AI value proposition.</li>
+            </ul>
+            <div class="tl-metrics"><span class="tm">↑35% feedback quality</span><span class="tm">↑40% adoption</span><span class="tm">50+ deliverables</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHEGG -->
+      <div class="tl-item active" onclick="toggleTL(this)">
+        <div class="tl-header">
+          <div class="tl-left">
+            <div class="tl-period">Feb '23 – Now</div>
+            <div class="tl-dot"></div>
+            <div>
+              <div class="tl-co">Chegg Inc.</div>
+              <div class="tl-role">Expert — Data Science &amp; AI</div>
+            </div>
+          </div>
+          <div class="tl-right">
+            <span class="tl-badge">Current</span>
+            <span class="tl-arrow">↓</span>
+          </div>
+        </div>
+        <div class="tl-body">
+          <div class="tl-content">
+            <div class="tl-tagline">↓10% dropout · ↑22% completion · ↑40% graduation · SCR built solo</div>
+            <ul class="tl-bullets">
+              <li>Led end-to-end 0→1 development of <strong>Smart Curriculum Recommender (SCR)</strong> — a 3-layer hybrid AI personalisation engine (Content-Based + Collaborative SVD + Sequential Markov Chain) generating explainable learning paths with a feedback-driven refresh loop and subscription-based access model.</li>
+              <li>Conducted <strong>Voice of Customer (VoC) and behavioral analytics</strong> on 30K+ user interactions using NLP (TF-IDF, LDA, VADER); synthesized findings that reduced dropout by 10% and improved satisfaction by 20%.</li>
+              <li>Designed and analyzed <strong>A/B tests</strong> on curriculum complexity, content sequencing, and grading rubrics; findings directly informed prioritization decisions and improved quiz scores by 18%.</li>
+              <li>Built <strong>Power BI dashboards</strong> to track DAU, engagement funnels, and completion rates; data-guided revisions lifted completion by 22% and contributed to a 40% improvement in graduation rates.</li>
+            </ul>
+            <div class="tl-metrics"><span class="tm">↓10% dropout</span><span class="tm">↑22% completion</span><span class="tm">↑18% quiz scores</span><span class="tm">↑40% graduation</span><span class="tm">↑20% satisfaction</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURED PROJECT ───────────────────────────────────── -->
+<section id="featured">
+  <div class="inner">
+    <div class="shdr rev">
+      <div class="ey">Built &amp; shipped</div>
+      <h2 class="htitle">The one I'm most proud of.</h2>
+    </div>
+    <div class="feat-card rev">
+      <div class="feat-l">
+        <div class="feat-pill">⭐ Featured · AI/ML · EdTech</div>
+        <h3 class="feat-title">Smart Curriculum Recommender (SCR)</h3>
+        <p class="feat-desc">A 3-layer hybrid AI personalisation engine built for Chegg Skills — solving "catalog overwhelm" by guiding students from unclear intent to the right course in seconds, with a structured path toward their career goal.</p>
+
+        <div class="subh">Problem</div>
+        <div class="feat-detail">Students visiting Chegg Skills faced catalog overload — hundreds of courses with no personalised entry point. Most knew what they wanted to achieve (become a Data Scientist, switch careers) but not which courses to buy or in what order. Discovery friction was the primary driver of abandonment before first purchase — not lack of content, but lack of navigation.</div>
+
+        <div class="subh">The 3-Layer AI Engine</div>
+        <div class="feat-detail">
+          <strong>Layer 1 — Content-Based Filter:</strong> Converts student profiles and courses into weighted feature vectors; ranks via cosine similarity. Solves cold-start — works with zero prior history. "Growth zone" bonus targets content slightly above the student's current level.<br><br>
+          <strong>Layer 2 — Collaborative SVD:</strong> 10K-student × 173-course implicit feedback matrix, factorised with Truncated SVD into 128 latent factors (83% variance explained). Surfaces what students who behaved similarly found valuable.<br><br>
+          <strong>Layer 3 — Sequential Markov:</strong> Learns bigram transition probabilities from completion sequences — 1,077 bigram states predicting the optimal next step. Activates after 2+ completions.<br><br>
+          <strong>Dynamic blending:</strong> Stage-based weights auto-shift from cold-start (100% content-based) to experienced (50% sequential + 30% collaborative + 20% content). No manual configuration.
+        </div>
+
+        <div class="subh">Tools</div>
+        <div class="tools-row">
+          <span class="tool">Python</span><span class="tool">Scikit-learn (SVD)</span><span class="tool">Pandas / NumPy</span>
+          <span class="tool">Cosine Similarity</span><span class="tool">Markov Chains</span>
+          <span class="tool">FastAPI</span><span class="tool">Docker</span>
+          <span class="tool">Google Colab</span><span class="tool">Power BI</span>
+        </div>
+      </div>
+      <div class="feat-r">
+        <div>
+          <div class="subh">Key Learnings</div>
+          <div class="feat-detail">Personalisation only holds value when backed by a feedback loop — the refresh mechanism was the critical design decision. Subscribers completed 30% more courses than free-tier users, validating "navigation as a product" distinct from the courses themselves.<br><br>Building for all lifecycle stages simultaneously — not the average user — was the core architectural insight. Cold-start users need content-based filtering; experienced users need sequential patterns.</div>
+
+          <div class="subh">Impact</div>
+          <div class="feat-nums">
+            <div class="fn"><span class="fn-num">↓10%</span><span class="fn-label">Dropout Rate</span></div>
+            <div class="fn"><span class="fn-num">↑22%</span><span class="fn-label">Completion Rate</span></div>
+            <div class="fn"><span class="fn-num">↑18%</span><span class="fn-label">Quiz Scores</span></div>
+            <div class="fn"><span class="fn-num">↑40%</span><span class="fn-label">Graduation Rate</span></div>
+          </div>
+        </div>
+        <div class="feat-btns">
+          <a href="https://colab.research.google.com/drive/19bVDYKbLQ9iCuPdkmoIF8ZQLdfZjJzp4?authuser=2#scrollTo=59vk1Z8ONpgG" target="_blank" class="fb1">↗ View Colab Notebook</a>
+          <a href="#" class="fb2">📊 View Presentation</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ALL PROJECTS ────────────────────────────────────────── -->
+<section id="projects">
+  <div class="inner">
+    <div class="shdr rev">
+      <div class="ey">All projects</div>
+      <h2 class="htitle">Things I built.</h2>
+      <p class="hsub">From bank churn dashboards to mobility subscription models — each structured as a PM case study.</p>
+    </div>
+    <div class="pgrid">
+
+      <!-- BANK CHURN -->
+      <div class="pc rev d1">
+        <div class="pc-accent" style="background:linear-gradient(90deg,#C44536,#E87070);"></div>
+        <div class="pc-body">
+          <div class="pc-type" style="color:#E87070;">📊 Analytics · ML · Power BI</div>
+          <h3 class="pc-title">Customer Churn Prediction Dashboard</h3>
+          <p class="pc-prob">Banks lose high-value customers silently — by the time churn is detected, it's too late. Identify at-risk users before they leave and surface that intelligence to non-technical stakeholders.</p>
+          <div class="ph">Approach</div>
+          <p class="pc-approach">End-to-end churn prediction pipeline: feature engineering from transactions, tenure, and product-usage breadth; Random Forest + Logistic Regression classifiers; live Power BI dashboard with risk segments and retention opportunity sizing.</p>
+          <div class="ph">Tools</div>
+          <div class="pc-tools"><span class="pt">Python</span><span class="pt">Scikit-learn</span><span class="pt">Pandas</span><span class="pt">Power BI</span><span class="pt">SQL</span></div>
+          <div class="ph">Impact</div>
+          <div class="pc-impact"><span class="pi">Risk segmentation live</span><span class="pi">Non-tech stakeholder ready</span></div>
+          <div class="ph">Key Learning</div>
+          <p class="pc-learn">Product-usage breadth was a stronger churn predictor than tenure — counter to the team's intuition. The dashboard made this actionable without requiring SQL access.</p>
+        </div>
+        <div class="pc-foot"><a href="#" class="pb1">📊 View Dashboard</a><a href="#" class="pb2">↗ View Code</a></div>
+      </div>
+
+      <!-- VOC -->
+      <div class="pc rev d2">
+        <div class="pc-accent" style="background:linear-gradient(90deg,#2D6A4F,#52B788);"></div>
+        <div class="pc-body">
+          <div class="pc-type" style="color:#52B788;">🎤 NLP · VoC · Product Insights</div>
+          <h3 class="pc-title">Voice of Customer (VoC) Analysis</h3>
+          <p class="pc-prob">Chegg had 30K+ raw user feedback entries with no structured mechanism to surface pain points or actionable product signals at scale.</p>
+          <div class="ph">Approach</div>
+          <p class="pc-approach">Full NLP pipeline — TF-IDF for keyword extraction, LDA for topic modelling, VADER for sentiment scoring per cluster. Outputs synthesised into a prioritised product backlog with evidence-backed recommendations.</p>
+          <div class="ph">Tools</div>
+          <div class="pc-tools"><span class="pt">Python</span><span class="pt">NLTK</span><span class="pt">TF-IDF</span><span class="pt">LDA</span><span class="pt">VADER</span><span class="pt">Matplotlib</span></div>
+          <div class="ph">Impact</div>
+          <div class="pc-impact"><span class="pi">↓ 10% dropout</span><span class="pi">↑ 20% satisfaction</span></div>
+          <div class="ph">Key Learning</div>
+          <p class="pc-learn">Sentiment alone misleads. Topic modelling separated surface sentiment from the true product signal — "content is too hard" is engagement, not complaint.</p>
+        </div>
+        <div class="pc-foot"><a href="#" class="pb1">📊 View Presentation</a><a href="#" class="pb2">↗ View Code</a></div>
+      </div>
+
+      <!-- ZOMATO -->
+      <div class="pc rev d3">
+        <div class="pc-accent" style="background:linear-gradient(90deg,#CB202D,#E8343F);"></div>
+        <div class="pc-body">
+          <div class="pc-type" style="color:#E8343F;">🍽 Product Design · AI · Consumer</div>
+          <h3 class="pc-title">Zomato AI Meal Planning Assistant</h3>
+          <p class="pc-prob">67% of users browse 5+ minutes without ordering. 34% bounce with no order placed — decision fatigue costing session revenue and retention.</p>
+          <div class="ph">Approach</div>
+          <p class="pc-approach">Designed an AI Meal Planning Assistant — mood NLP input, weekly planner, budget filter, health mode. Full PM case study: 3 personas, before/after journey, 6-metric success framework, 3-phase GTM (MVP → Premium ₹99/mo).</p>
+          <div class="ph">Tools</div>
+          <div class="pc-tools"><span class="pt">Product Design</span><span class="pt">NLP Concepts</span><span class="pt">PRD</span><span class="pt">GTM</span><span class="pt">A/B Framework</span></div>
+          <div class="ph">Impact (Projected)</div>
+          <div class="pc-impact"><span class="pi">TTFO: 6.5min→90sec</span><span class="pi">Conv: 52%→68%</span><span class="pi">AOV +18%</span></div>
+          <div class="ph">Key Learning</div>
+          <p class="pc-learn">Weekly Active Planners (habit frequency) predicted D30 retention better than single-session conversion rate.</p>
+        </div>
+        <div class="pc-foot"><a href="#" class="pb1">📊 View Deck</a><a href="#" class="pb2">↗ Case Study</a></div>
+      </div>
+
+      <!-- RAPIDO -->
+      <div class="pc rev d1">
+        <div class="pc-accent" style="background:linear-gradient(90deg,#F7941D,#FDB462);"></div>
+        <div class="pc-body">
+          <div class="pc-type" style="color:#F7941D;">🛵 Product Strategy · Subscription</div>
+          <h3 class="pc-title">Rapido Daily Commuter Subscription</h3>
+          <p class="pc-prob">~23% cancellation rate, 4–7 min acceptance delays, 1.5x–2.5x surge pricing make Rapido unreliable for daily commuters — eroding trust and driving churn.</p>
+          <div class="ph">Approach</div>
+          <p class="pc-approach">3-tier subscription model (₹799/₹1,499/₹2,299) with Surge Lock, Priority Matching Engine, Cancellation Shield, Predictive Scheduling, and Driver Incentive Layer. Full PM case study: personas, competitor gap, 6 metrics with baselines, 3-phase GTM.</p>
+          <div class="ph">Tools</div>
+          <div class="pc-tools"><span class="pt">Product Design</span><span class="pt">Market Research</span><span class="pt">Metrics Design</span><span class="pt">GTM</span></div>
+          <div class="ph">Impact (Projected)</div>
+          <div class="pc-impact"><span class="pi">₹14.9Cr MRR @ 100K subs</span><span class="pi">Cancel: 23%→5%</span></div>
+          <div class="ph">Key Learning</div>
+          <p class="pc-learn">Driver incentive alignment is the actual moat — not the pricing tiers. Two-sided marketplace subscriptions succeed or fail on supply-side economics.</p>
+        </div>
+        <div class="pc-foot"><a href="#" class="pb1">📊 View Deck</a><a href="#" class="pb2">↗ Case Study</a></div>
+      </div>
+
+      <!-- RAG -->
+      <div class="pc rev d2">
+        <div class="pc-accent" style="background:linear-gradient(90deg,#264653,#2A9D8F);"></div>
+        <div class="pc-body">
+          <div class="pc-type" style="color:#2A9D8F;">🤖 GenAI · RAG · LLM Engineering</div>
+          <h3 class="pc-title">Career-Path AI Advisor (RAG System)</h3>
+          <p class="pc-prob">Generic career advice fails individual skill gaps and job market signals — leaving users with vague, non-actionable guidance they can't act on.</p>
+          <div class="ph">Approach</div>
+          <p class="pc-approach">Domain-specific RAG system: FAISS vector search + Hugging Face LLMs. Integrated O*NET skill frameworks, resume parsing, and live job data into a multi-source retrieval pipeline. Explainability-first design with a dedicated /explain endpoint.</p>
+          <div class="ph">Tools</div>
+          <div class="pc-tools"><span class="pt">Python</span><span class="pt">FAISS</span><span class="pt">Hugging Face</span><span class="pt">RAG</span><span class="pt">O*NET API</span><span class="pt">LangChain</span></div>
+          <div class="ph">Impact</div>
+          <div class="pc-impact"><span class="pi">Grounded recommendations</span><span class="pi">Hallucination ↓↓</span></div>
+          <div class="ph">Key Learning</div>
+          <p class="pc-learn">Without retrieval, LLMs confidently hallucinate job requirements. FAISS grounding made outputs auditable — and trustworthy.</p>
+        </div>
+        <div class="pc-foot">
+          <a href="https://colab.research.google.com/drive/1HHMNgsLfx2CdX27YO0CDX2RW5X3tMIFI" target="_blank" class="pb1">↗ View Colab</a>
+          <a href="#" class="pb2">📄 Docs</a>
+        </div>
+      </div>
+
+      <!-- RESEARCH -->
+      <div class="pc rev d3" style="border-color:#1A2E36;">
+        <div class="research-pill">ACM · Scopus</div>
+        <div class="pc-accent" style="background:linear-gradient(90deg,#264653,#4DAAFF);"></div>
+        <div class="pc-body">
+          <div class="pc-type" style="color:#4DAAFF;">📑 Research · EDA · Published</div>
+          <h3 class="pc-title">EDA on Alcohol Consumption &amp; Academic Performance</h3>
+          <p class="pc-prob">Existing studies ignored demographic variation, urban/rural differences, and social behaviour as combined predictors of alcohol consumption in students.</p>
+          <div class="ph">Approach</div>
+          <p class="pc-approach">Python-based EDA on 649 student records from Portuguese secondary schools. Statistical visualisation (Seaborn, Matplotlib), correlation heatmaps, hypothesis testing across demographic, academic, and social dimensions. Published ICIMMI 2022.</p>
+          <div class="ph">Tools</div>
+          <div class="pc-tools"><span class="pt">Python</span><span class="pt">Pandas</span><span class="pt">Seaborn</span><span class="pt">Matplotlib</span><span class="pt">Google Colab</span></div>
+          <div class="ph">Key Findings</div>
+          <div class="pc-impact"><span class="pi">Urban → more consumption</span><span class="pi">Family quality → ↓ drinking</span></div>
+          <div class="ph">Key Learning</div>
+          <p class="pc-learn">Non-linear dynamics are missed by simple models. The peak appeared at famrel=2, not famrel=1 — strong relationships reduce consumption, but the pattern isn't monotonic.</p>
+        </div>
+        <div class="pc-foot">
+          <a href="#" class="pb1">📄 View Paper (ACM)</a>
+          <a href="https://colab.research.google.com/drive/1QjpUkgvshw18SngnUoqcxykofZOlJymX?authuser=1" target="_blank" class="pb2">↗ View Code</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── SKILLS ──────────────────────────────────────────────── -->
+<section id="skills">
+  <div class="inner">
+    <div class="shdr rev">
+      <div class="ey">Dual identity</div>
+      <h2 class="htitle">Product brain. Data brain.</h2>
+      <p class="hsub">What makes this rare: I think in product strategy and first principles — then I build the analytics infrastructure myself.</p>
+    </div>
+    <div class="dual-grid">
+      <div class="dual-card rev">
+        <div class="dual-card-header">
+          <div class="dual-icon">📈</div>
+          <div>
+            <div class="dual-card-title">Product Strategist</div>
+            <div class="dual-card-sub">Chegg · Wokelo AI · PM Case Studies</div>
+          </div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-title">Product Management</div>
+          <div class="skill-row-sub">End-to-end product lifecycle · PRD writing · roadmapping · user stories · OKR alignment</div>
+          <div class="skill-tags"><span class="stag">PRD Writing</span><span class="stag">Roadmapping</span><span class="stag">User Stories</span><span class="stag">OKR / KPI</span></div>
+        </div>
+        <hr class="skill-divider">
+        <div class="skill-row">
+          <div class="skill-row-title">Experimentation &amp; Research</div>
+          <div class="skill-row-sub">A/B testing · funnel analysis · cohort analysis · VoC · user personas</div>
+          <div class="skill-tags"><span class="stag">A/B Testing</span><span class="stag">Funnel Analysis</span><span class="stag">Cohort Analysis</span><span class="stag">VoC</span><span class="stag">Personas</span></div>
+        </div>
+        <hr class="skill-divider">
+        <div class="skill-row">
+          <div class="skill-row-title">Strategy &amp; GTM</div>
+          <div class="skill-row-sub">Market research · competitive intelligence · SWOT · go-to-market planning</div>
+          <div class="skill-tags"><span class="stag">Market Research</span><span class="stag">SWOT</span><span class="stag">Competitive Intel</span><span class="stag">GTM</span></div>
+        </div>
+        <hr class="skill-divider">
+        <div class="skill-row">
+          <div class="skill-row-title">Execution</div>
+          <div class="skill-tags"><span class="stag">Jira</span><span class="stag">Confluence</span><span class="stag">Asana</span><span class="stag">Agile / Scrum</span><span class="stag">Stakeholder Mgmt</span></div>
+        </div>
+      </div>
+
+      <div class="dual-card rev d1">
+        <div class="dual-card-header">
+          <div class="dual-icon">⚙️</div>
+          <div>
+            <div class="dual-card-title">Data &amp; AI Builder</div>
+            <div class="dual-card-sub">Python · SQL · LLMs · RAG · Power BI</div>
+          </div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-title">Data &amp; Analytics</div>
+          <div class="skill-row-sub">Daily work across Python, SQL, and BI tools — complex funnel analysis and KPI tracking</div>
+          <div class="skill-tags"><span class="stag">SQL</span><span class="stag">Python</span><span class="stag">Pandas</span><span class="stag">Power BI</span><span class="stag">Tableau</span><span class="stag">Excel</span></div>
+        </div>
+        <hr class="skill-divider">
+        <div class="skill-row">
+          <div class="skill-row-title">AI / ML / GenAI</div>
+          <div class="skill-row-sub">LLM integration · RAG pipelines · collaborative filtering · NLP at scale</div>
+          <div class="skill-tags"><span class="stag">LLM Integration</span><span class="stag">RAG / FAISS</span><span class="stag">Hugging Face</span><span class="stag">Scikit-learn</span><span class="stag">SVD / CF</span><span class="stag">TF-IDF · LDA</span><span class="stag">VADER</span><span class="stag">Prompt Engineering</span></div>
+        </div>
+        <hr class="skill-divider">
+        <div class="skill-row">
+          <div class="skill-row-title">Infrastructure &amp; Deployment</div>
+          <div class="skill-tags"><span class="stag">FastAPI</span><span class="stag">Docker</span><span class="stag">Google Colab</span><span class="stag">Matplotlib</span><span class="stag">Seaborn</span></div>
+        </div>
+        <hr class="skill-divider">
+        <div class="skill-row">
+          <div class="skill-row-title">Visualisation</div>
+          <div class="skill-tags"><span class="stag">Power BI</span><span class="stag">Tableau</span><span class="stag">Matplotlib</span><span class="stag">Seaborn</span><span class="stag">Executive Reporting</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ──────────────────────────────────────────────────── -->
+<section id="cta">
+  <div class="cta-ey rev">Open to opportunities</div>
+  <h2 class="cta-h rev">Let's build something<br><em>impactful.</em></h2>
+  <p class="cta-sub rev">I'm looking for Product Analyst and PM roles where data, AI, and user empathy converge. If you're working on something ambitious — I'd love to hear about it.</p>
+  <div class="cta-row rev">
+    <a href="mailto:yashverma1002@gmail.com" class="btn-a">✉ Email directly</a>
+    <a href="https://linkedin.com/in/yashverma" target="_blank" class="btn-b">LinkedIn ↗</a>
+    <a href="tel:+916397610656" class="btn-b">+91 63976 10656</a>
+  </div>
+  <div class="cta-links rev">
+    <a href="mailto:yashverma1002@gmail.com" class="cta-link">✉ yashverma1002@gmail.com</a>
+    <a href="https://linkedin.com/in/yashverma" target="_blank" class="cta-link">LinkedIn ↗</a>
+    <a href="#" class="cta-link">Resume PDF</a>
+  </div>
+</section>
+
+<!-- ── CONTACT ──────────────────────────────────────────────── -->
+<section id="contact">
+  <div class="inner">
+    <div class="shdr rev">
+      <div class="ey">Let's connect</div>
+      <h2 class="htitle">Say hello.</h2>
+    </div>
+    <div class="contact-grid">
+      <div class="rev">
+        <p>Happy to chat about product, AI, analytics, or swap notes on interesting problems. Hit <strong style="color:var(--accent)">Send message</strong> to send directly, or use any of the links below.</p>
+        <div class="contact-links">
+          <a href="mailto:yashverma1002@gmail.com" class="cl"><span class="cl-icon">✉</span><div><span class="cl-lbl">Email</span><span class="cl-val">yashverma1002@gmail.com</span></div></a>
+          <a href="tel:+916397610656" class="cl"><span class="cl-icon">📞</span><div><span class="cl-lbl">Phone</span><span class="cl-val">+91 63976 10656</span></div></a>
+          <a href="https://linkedin.com/in/yashverma" target="_blank" class="cl"><span class="cl-icon">🔗</span><div><span class="cl-lbl">LinkedIn</span><span class="cl-val">linkedin.com/in/yashverma</span></div></a>
+          <a href="#" class="cl"><span class="cl-icon">📍</span><div><span class="cl-lbl">Location</span><span class="cl-val">Delhi, India · Open to remote</span></div></a>
+        </div>
+      </div>
+      <div class="cf-box rev d1">
+        <div class="cf-title">Send me a message</div>
+        <form onsubmit="handleForm(event)">
+          <div class="fg-g"><label>Your name *</label><input type="text" placeholder="Your name" required></div>
+          <div class="fg-g"><label>Your email *</label><input type="email" placeholder="your@email.com" required></div>
+          <div class="fg-g"><label>Phone / WhatsApp</label><input type="text" placeholder="+91..."></div>
+          <div class="fg-g"><label>Message *</label><textarea placeholder="Tell me about the role, the problem, or just say hi..." required></textarea></div>
+          <button type="submit" class="cf-btn">Send message →</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ──────────────────────────────────────────────── -->
+<footer>
+  <div class="fl"><strong>Yash Verma</strong> · Delhi, India · DTU '23 · Chegg · Wokelo AI</div>
+  <div class="flinks">
+    <a href="mailto:yashverma1002@gmail.com">Email</a>
+    <a href="https://linkedin.com/in/yashverma" target="_blank">LinkedIn</a>
+    <a href="#hero">Back to top ↑</a>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════
+   JS
+═══════════════════════════════════════════════════════════ -->
+<script>
+// ── Cursor
+const cur = document.getElementById('cur');
+const curR = document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+window.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cur.style.transform=`translate(${mx-4}px,${my-4}px)`;
+});
+function animCurR(){
+  rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+  curR.style.transform=`translate(${rx-18}px,${ry-18}px)`;
+  requestAnimationFrame(animCurR);
+}
+animCurR();
+
+// ── Scroll reveal
+const obs = new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on');}),{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.rev').forEach(el=>obs.observe(el));
+
+// ── Nav active
+const secs=document.querySelectorAll('section[id]');
+const nls=document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll',()=>{
+  let cur2='';
+  secs.forEach(s=>{if(window.scrollY>=s.offsetTop-140)cur2=s.id;});
+  nls.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur2));
+},{passive:true});
+
+// ── Timeline toggle
+function toggleTL(item){
+  const wasActive=item.classList.contains('active');
+  document.querySelectorAll('.tl-item').forEach(i=>i.classList.remove('active'));
+  if(!wasActive) item.classList.add('active');
+}
+
+// ── Mobile menu
+function toggleMob(){document.getElementById('mob').classList.toggle('open');}
+function closeMob(){document.getElementById('mob').classList.remove('open');}
+
+// ── Hero glow parallax
+window.addEventListener('mousemove',e=>{
+  const g=document.querySelector('.hero-bg');
+  if(!g) return;
+  const x=(e.clientX/window.innerWidth-0.5)*30;
+  const y=(e.clientY/window.innerHeight-0.5)*30;
+  g.style.backgroundPosition=`${50+x*0.3}% ${50+y*0.3}%`;
+},{passive:true});
+
+// ── Form
+function handleForm(e){
+  e.preventDefault();
+  const b=e.target.querySelector('.cf-btn');
+  b.textContent='✓ Sent! I\'ll be in touch.';
+  b.style.background='#4DCC8F'; b.style.color='#000';
+  setTimeout(()=>{b.textContent='Send message →';b.style.background='';b.style.color='';},3500);
+}
+
+// ── Cursor scale on links
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{
+    cur.style.transform=`translate(${mx-4}px,${my-4}px) scale(2)`;
+    curR.style.borderColor='rgba(200,240,77,0.7)';
+  });
+  el.addEventListener('mouseleave',()=>{
+    curR.style.borderColor='rgba(200,240,77,0.4)';
+  });
+});
+</script>
+</body>
+</html>
